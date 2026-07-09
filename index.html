@@ -503,30 +503,44 @@ function hideLockShowApp(){
 }
 /* ----- Jardin secret : ouverture / création du code dédié ----- */
 function returnToSettings(){ pinTarget='app'; hideLockShowApp(); state.tab='settings'; render(); }
+// 2e facteur : exige Face ID AVANT de montrer l'écran du code secret (code seul insuffisant)
+function requireSecretBio(onOk){
+  if(!webauthnAvailable()){ toast('Face ID requis — ouvrez l’app installée'); return; }
+  if(!db.settings.faceIdCred){ toast('Activez d’abord Face ID (Réglages → Sécurité)'); return; }
+  var chal=new Uint8Array(32); crypto.getRandomValues(chal);
+  var raw=Uint8Array.from(atob(db.settings.faceIdCred),function(c){return c.charCodeAt(0);});
+  navigator.credentials.get({publicKey:{
+    challenge:chal, allowCredentials:[{type:'public-key',id:raw}], userVerification:'required', timeout:60000
+  }}).then(function(){ onOk(); }).catch(function(){ toast('Face ID requis pour le jardin secret'); });
+}
 function openSecret(){
-  document.getElementById('app').classList.add('hidden');
-  pinTarget='secret'; pinCancelFn=returnToSettings;
-  var creating = !(db.secret && db.secret.hash);
-  pinCb=function(){
-    pinTarget='app'; secretUnlocked=true; hideLockShowApp();
-    state.tab='secret'; render(); if(creating)toast('Jardin secret créé 🌱');
-  };
-  lockUI(creating?'setup':'verify');
-  document.getElementById('lockTitle').textContent='🌱 Jardin secret';
-  document.getElementById('lockHint').textContent=creating?'Créez un code secret (différent du principal)':'Entrez le code du jardin secret';
+  requireSecretBio(function(){
+    document.getElementById('app').classList.add('hidden');
+    var creating = !(db.secret && db.secret.hash);
+    pinTarget='secret'; pinCancelFn=returnToSettings;
+    pinCb=function(){
+      pinTarget='app'; secretUnlocked=true; hideLockShowApp();
+      state.tab='secret'; render(); if(creating)toast('Jardin secret créé 🌱');
+    };
+    lockUI(creating?'setup':'verify');
+    document.getElementById('lockTitle').textContent='🌱 Jardin secret';
+    document.getElementById('lockHint').textContent=creating?'Créez un code secret (différent du principal)':'Entrez le code du jardin secret';
+  });
 }
 function changeSecretFlow(){
-  document.getElementById('app').classList.add('hidden');
-  pinTarget='secret'; pinCancelFn=returnToSettings;
-  pinCb=function(){ // code secret actuel vérifié -> en choisir un nouveau
-    pinCb=function(){ pinTarget='app'; hideLockShowApp(); state.tab='settings'; render(); toast('Code secret modifié'); };
-    lockUI('setup');
+  requireSecretBio(function(){
+    document.getElementById('app').classList.add('hidden');
+    pinTarget='secret'; pinCancelFn=returnToSettings;
+    pinCb=function(){ // code secret actuel vérifié -> en choisir un nouveau
+      pinCb=function(){ pinTarget='app'; hideLockShowApp(); state.tab='settings'; render(); toast('Code secret modifié'); };
+      lockUI('setup');
+      document.getElementById('lockTitle').textContent='🌱 Jardin secret';
+      document.getElementById('lockHint').textContent='Nouveau code secret';
+    };
+    lockUI('verify');
     document.getElementById('lockTitle').textContent='🌱 Jardin secret';
-    document.getElementById('lockHint').textContent='Nouveau code secret';
-  };
-  lockUI('verify');
-  document.getElementById('lockTitle').textContent='🌱 Jardin secret';
-  document.getElementById('lockHint').textContent='Code secret actuel';
+    document.getElementById('lockHint').textContent='Code secret actuel';
+  });
 }
 function maybeBanner(){
   var b=document.getElementById('installBanner');
@@ -890,7 +904,7 @@ function renderSettings(hdr,view){
 
   var secretSet=!!(db.secret&&db.secret.hash);
   h+='<div class="grp-h">Confidentialité</div><div class="grp">'
-    +'<div class="row tap" id="secBtn">'+ric('leaf','#5e5ce6')+'<div class="lbl">Jardin secret<div class="sub">'+(secretSet?'Espace masqué, protégé par un code dédié':'Créer un espace secret masqué')+'</div></div><div class="val">›</div></div>'
+    +'<div class="row tap" id="secBtn">'+ric('leaf','#5e5ce6')+'<div class="lbl">Jardin secret<div class="sub">'+(secretSet?'Protégé par Face ID + code dédié':'Créer un espace secret (Face ID + code)')+'</div></div><div class="val">›</div></div>'
     +(secretSet?'<div class="row tap" id="secChg">'+ric('key','#5e5ce6')+'<div class="lbl">Modifier le code du jardin secret</div><div class="val">›</div></div>':'')
     +'</div>';
 
