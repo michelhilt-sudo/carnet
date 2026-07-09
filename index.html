@@ -292,8 +292,10 @@ function hashPin(pin,salt){return sha256(salt+':carnet:'+pin);}
 
 /* ---------- Persistance ---------- */
 var KEY='carnet.data.v1';
-var DEFAULTS={notes:[],settings:{autoLock:'immediate',theme:'auto',faceId:false,faceIdCred:'',installDismissed:false},auth:{salt:'',hash:'',fails:0,lockUntil:0},secret:{salt:'',hash:''}};
+var DEFAULTS={notes:[],settings:{autoLock:'immediate',theme:'dark',darkMigrated:false,faceId:false,faceIdCred:'',installDismissed:false},auth:{salt:'',hash:'',fails:0,lockUntil:0},secret:{salt:'',hash:''}};
 var db=load();
+// Migration unique : passe les installs existantes en « auto » vers le thème sombre (une seule fois)
+if(!db.settings.darkMigrated){ if(db.settings.theme==='auto')db.settings.theme='dark'; db.settings.darkMigrated=true; save(); }
 function load(){
   try{var raw=localStorage.getItem(KEY); if(!raw)return clone(DEFAULTS);
     var d=JSON.parse(raw);
