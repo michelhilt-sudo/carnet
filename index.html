@@ -169,7 +169,7 @@
 
   /* ---------- Lock screen ---------- */
   #lock{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(var(--toppad) + 20px) 24px calc(var(--botpad) + 20px);}
-  #lock .logo{width:76px;height:76px;border-radius:20px;background:linear-gradient(160deg,#0a84ff,#5e5ce6);display:grid;place-items:center;margin-bottom:18px;box-shadow:0 10px 30px rgba(10,132,255,.35);}
+  #lock .logo{width:76px;height:76px;border-radius:20px;background:linear-gradient(180deg,#17171c,#060608);display:grid;place-items:center;margin-bottom:18px;box-shadow:0 10px 30px rgba(255,120,0,.22);}
   #lock .logo svg{width:40px;height:40px;color:#fff;}
   #lock h2{margin:0 0 6px;font-size:22px;font-weight:700;}
   #lock .hint{color:var(--txt2);font-size:15px;margin-bottom:26px;text-align:center;min-height:20px;}
@@ -231,7 +231,7 @@
 
 <!-- ============ LOCK SCREEN ============ -->
 <div id="lock">
-  <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v14a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2z"/><path d="M8 4v17"/><path d="M11 8h5M11 12h5"/></svg></div>
+  <div class="logo"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="lgc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb03a"/><stop offset="1" stop-color="#ff6a00"/></linearGradient></defs><path d="M16.4 6.3A7.2 7.2 0 1 0 16.4 17.7" fill="none" stroke="url(#lgc)" stroke-width="3.4"/></svg></div>
   <h2 id="lockTitle">Carnet</h2>
   <div class="hint" id="lockHint">Entrez votre code</div>
   <div class="dots" id="dots"></div>
