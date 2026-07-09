@@ -17,9 +17,9 @@
     color-scheme:light;
     --bg:#f2f2f7; --bg2:#ffffff; --card:#ffffff; --sep:#e3e3e8;
     --txt:#1c1c1e; --txt2:#8a8a8e; --txt3:#aeaeb2;
-    --accent:#0a84ff; --pro:#0a84ff; --prive:#ffc400;
+    --accent:#0a84ff; --pro:#0a84ff; --prive:#ffc916;
     --danger:#ff3b30; --field:rgba(120,120,128,.14); --key:rgba(120,120,128,.14); --nav:rgba(249,249,249,.82);
-    --shadow:0 1px 3px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.05); --segon:#ffffff; --segprive:#fff1bf; --segpro:#cfe2ff;
+    --shadow:0 1px 3px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.05); --segon:#ffffff; --segprive:#fff1c5; --segpro:#cfe2ff;
     --toppad:env(safe-area-inset-top); --botpad:env(safe-area-inset-bottom);
   }
   @media (prefers-color-scheme: dark){
@@ -27,15 +27,15 @@
       color-scheme:dark;
       --bg:#000000; --bg2:#0c0c0e; --card:#1c1c1e; --sep:#2c2c2e;
       --txt:#ffffff; --txt2:#98989f; --txt3:#636366;
-      --accent:#0a84ff; --pro:#0a84ff; --prive:#ffc400;
+      --accent:#0a84ff; --pro:#0a84ff; --prive:#ffc916;
       --danger:#ff453a; --field:rgba(120,120,128,.26); --key:rgba(120,120,128,.28); --nav:rgba(20,20,22,.82);
-      --shadow:0 1px 3px rgba(0,0,0,.4); --segon:#48484a; --segprive:rgba(255,210,64,.46); --segpro:rgba(74,163,255,.46);
+      --shadow:0 1px 3px rgba(0,0,0,.4); --segon:#48484a; --segprive:rgba(255,201,22,.46); --segpro:rgba(74,163,255,.46);
     }
   }
   html[data-theme="light"]{ color-scheme:light;
-    --bg:#f2f2f7;--bg2:#fff;--card:#fff;--sep:#e3e3e8;--txt:#1c1c1e;--txt2:#8a8a8e;--txt3:#aeaeb2;--field:rgba(120,120,128,.14);--key:rgba(120,120,128,.14);--nav:rgba(249,249,249,.82);--shadow:0 1px 3px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.05);--segon:#fff;--segprive:#fff1bf;--segpro:#cfe2ff;}
+    --bg:#f2f2f7;--bg2:#fff;--card:#fff;--sep:#e3e3e8;--txt:#1c1c1e;--txt2:#8a8a8e;--txt3:#aeaeb2;--field:rgba(120,120,128,.14);--key:rgba(120,120,128,.14);--nav:rgba(249,249,249,.82);--shadow:0 1px 3px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.05);--segon:#fff;--segprive:#fff1c5;--segpro:#cfe2ff;}
   html[data-theme="dark"]{ color-scheme:dark;
-    --bg:#000;--bg2:#0c0c0e;--card:#1c1c1e;--sep:#2c2c2e;--txt:#fff;--txt2:#98989f;--txt3:#636366;--field:rgba(120,120,128,.26);--key:rgba(120,120,128,.28);--nav:rgba(20,20,22,.82);--shadow:0 1px 3px rgba(0,0,0,.4);--segon:#48484a;--segprive:rgba(255,210,64,.46);--segpro:rgba(74,163,255,.46);}
+    --bg:#000;--bg2:#0c0c0e;--card:#1c1c1e;--sep:#2c2c2e;--txt:#fff;--txt2:#98989f;--txt3:#636366;--field:rgba(120,120,128,.26);--key:rgba(120,120,128,.28);--nav:rgba(20,20,22,.82);--shadow:0 1px 3px rgba(0,0,0,.4);--segon:#48484a;--segprive:rgba(255,201,22,.46);--segpro:rgba(74,163,255,.46);}
 
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;height:100%;}
@@ -171,7 +171,7 @@
 
   /* ---------- Lock screen ---------- */
   #lock{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(var(--toppad) + 20px) 24px calc(var(--botpad) + 20px);}
-  #lock .logo{width:76px;height:76px;border-radius:20px;background:linear-gradient(180deg,#17171c,#060608);display:grid;place-items:center;margin-bottom:18px;box-shadow:0 10px 30px rgba(255,200,0,.24);}
+  #lock .logo{width:76px;height:76px;border-radius:20px;background:linear-gradient(180deg,#16161b,#060608);display:grid;place-items:center;margin-bottom:18px;box-shadow:0 10px 30px rgba(255,201,22,.24);}
   #lock .logo svg{width:40px;height:40px;color:#fff;}
   #lock h2{margin:0 0 6px;font-size:22px;font-weight:700;}
   #lock .hint{color:var(--txt2);font-size:15px;margin-bottom:26px;text-align:center;min-height:20px;}
@@ -233,7 +233,7 @@
 
 <!-- ============ LOCK SCREEN ============ -->
 <div id="lock">
-  <div class="logo"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="lgc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe04d"/><stop offset="1" stop-color="#ffbe00"/></linearGradient></defs><path d="M16.4 6.3A7.2 7.2 0 1 0 16.4 17.7" fill="none" stroke="url(#lgc)" stroke-width="3.4"/></svg></div>
+  <div class="logo"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="lgc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc916"/><stop offset="1" stop-color="#ffc916"/></linearGradient></defs><path d="M16.4 6.3A7.2 7.2 0 1 0 16.4 17.7" fill="none" stroke="url(#lgc)" stroke-width="3.4"/></svg></div>
   <h2 id="lockTitle">Carnet</h2>
   <div class="hint" id="lockHint">Entrez votre code</div>
   <div class="dots" id="dots"></div>

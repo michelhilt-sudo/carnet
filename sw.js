@@ -1,5 +1,5 @@
 /* Service worker Carnet — cache-first pour un lancement 100% hors-ligne une fois installé. */
-const CACHE = 'carnet-v9';
+const CACHE = 'carnet-v10';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {
