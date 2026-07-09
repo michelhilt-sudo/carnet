@@ -398,7 +398,7 @@ function domColor(d){return d==='pro'?'var(--pro)':'var(--prive)';}
    VERROUILLAGE (PIN + Face ID optionnel via WebAuthn)
 ================================================================== */
 var PIN_LEN=4, unlocked=false, hiddenAt=0;
-var pinBuf='', pinMode='unlock', pinFirst='', pinCb=null;
+var pinBuf='', pinMode='unlock', pinFirst='', pinCb=null, secretBioTimer=null;
 var secretUnlocked=false, pinTarget='app'; // 'app' = code principal, 'secret' = jardin secret
 var pinCancelFn=null; // permet d'annuler un sous-flux de code (secret, changement) et revenir à l'app
 
@@ -488,6 +488,7 @@ function doUnlock(){
 }
 function lockNow(){
   if(!hasPin())return;
+  clearSecretTimeout();
   unlocked=false; secretUnlocked=false; pinTarget='app';
   if(state.tab==='secret')state.tab='settings';
   // NB : on NE détruit PAS l'éditeur ouvert (#sheetRoot) — l'écran de verrouillage
@@ -504,6 +505,16 @@ function hideLockShowApp(){
 /* ----- Jardin secret : ouverture / création du code dédié ----- */
 function returnToSettings(){ pinTarget='app'; hideLockShowApp(); state.tab='settings'; render(); }
 // 2e facteur : exige Face ID AVANT de montrer l'écran du code secret (code seul insuffisant)
+// + fenêtre de 60 s max entre le Face ID réussi et la saisie du code, sinon annulation.
+function clearSecretTimeout(){ if(secretBioTimer){clearTimeout(secretBioTimer);secretBioTimer=null;} }
+function armSecretTimeout(){
+  clearSecretTimeout();
+  secretBioTimer=setTimeout(function(){
+    secretBioTimer=null; pinCb=null; pinBuf=''; pinMode='unlock';
+    var f=pinCancelFn; pinCancelFn=null; if(f)f(); else returnToSettings();
+    toast('Délai dépassé — refaites Face ID');
+  },60000);
+}
 function requireSecretBio(onOk){
   if(!webauthnAvailable()){ toast('Face ID requis — ouvrez l’app installée'); return; }
   if(!db.settings.faceIdCred){ toast('Activez d’abord Face ID (Réglages → Sécurité)'); return; }
@@ -519,12 +530,14 @@ function openSecret(){
     var creating = !(db.secret && db.secret.hash);
     pinTarget='secret'; pinCancelFn=returnToSettings;
     pinCb=function(){
+      clearSecretTimeout();
       pinTarget='app'; secretUnlocked=true; hideLockShowApp();
       state.tab='secret'; render(); if(creating)toast('Jardin secret créé 🌱');
     };
     lockUI(creating?'setup':'verify');
     document.getElementById('lockTitle').textContent='🌱 Jardin secret';
-    document.getElementById('lockHint').textContent=creating?'Créez un code secret (différent du principal)':'Entrez le code du jardin secret';
+    document.getElementById('lockHint').textContent=creating?'Créez un code secret (différent du principal)':'Entrez le code du jardin secret (60 s)';
+    armSecretTimeout();
   });
 }
 function changeSecretFlow(){
@@ -532,6 +545,7 @@ function changeSecretFlow(){
     document.getElementById('app').classList.add('hidden');
     pinTarget='secret'; pinCancelFn=returnToSettings;
     pinCb=function(){ // code secret actuel vérifié -> en choisir un nouveau
+      clearSecretTimeout();
       pinCb=function(){ pinTarget='app'; hideLockShowApp(); state.tab='settings'; render(); toast('Code secret modifié'); };
       lockUI('setup');
       document.getElementById('lockTitle').textContent='🌱 Jardin secret';
@@ -539,7 +553,8 @@ function changeSecretFlow(){
     };
     lockUI('verify');
     document.getElementById('lockTitle').textContent='🌱 Jardin secret';
-    document.getElementById('lockHint').textContent='Code secret actuel';
+    document.getElementById('lockHint').textContent='Code secret actuel (60 s)';
+    armSecretTimeout();
   });
 }
 function maybeBanner(){
@@ -581,13 +596,14 @@ document.getElementById('keypad').addEventListener('click',function(e){
 });
 document.getElementById('lockCancel').addEventListener('click',function(){
   if(!pinCancelFn)return;
+  clearSecretTimeout();
   var f=pinCancelFn; pinCancelFn=null; pinCb=null; pinBuf=''; pinMode='unlock'; f();
 });
 document.addEventListener('keydown',function(e){
   if(document.getElementById('lock').classList.contains('hidden'))return;
   if(e.key>='0'&&e.key<='9')pinPress(e.key);
   else if(e.key==='Backspace')pinPress('back');
-  else if(e.key==='Escape'&&pinCancelFn){var f=pinCancelFn;pinCancelFn=null;pinCb=null;pinBuf='';pinMode='unlock';f();}
+  else if(e.key==='Escape'&&pinCancelFn){clearSecretTimeout();var f=pinCancelFn;pinCancelFn=null;pinCb=null;pinBuf='';pinMode='unlock';f();}
 });
 
 /* ==================================================================
